@@ -1,0 +1,23 @@
+.navbar-badge {
+    font-size: .6rem !important;
+    font-weight: 200 !important;
+    line-height: 0.6 !important;
+    padding: 2px 4px !important;
+    position: absolute !important;
+    right: 5px !important;
+    top: 9px !important;
+}
+
+i.far {
+    font-size: 1.3rem !important;
+}
+
+.navbar-laravel {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+}
+
+.router-link-exact-active {
+    background-color: #3f51b5 !important;
+    color: #fff;
+}

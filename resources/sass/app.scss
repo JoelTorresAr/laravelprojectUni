@@ -1,0 +1,20 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+// Variables
+@import 'variables';
+$fa-font-path: "../webfonts";
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+@import '~admin-lte/dist/css/adminlte.css';
+@import '../css/all.min.css';
+//FontAwesome
+@import "@fortawesome/fontawesome-free/scss/fontawesome.scss";
+@import "@fortawesome/fontawesome-free/scss/solid.scss";
+@import "@fortawesome/fontawesome-free/scss/brands.scss";
+@import "@fortawesome/fontawesome-free/scss/regular.scss";
+//vuetify
+@import '~vuetify/dist/vuetify.css';
+@import url('https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900');
+//Toastr
+//@import '~toastr/build/toastr.css'//
+@import './toastr.scss';
