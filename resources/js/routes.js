@@ -6,22 +6,22 @@ Vue.use(Router)
 let routes = [{
         path: '/admin/dashboard',
         name: 'dashboard',
-        component: require('./components/admin/Dahsboard.vue').default,
+        component: require('./views/admin/Dahsboard.vue').default,
     },
     {
         path: '/admin/staff',
         name: 'staff',
-        component: require('./components/admin/staff/StaffTable').default
+        component: require('./views/admin/staff/StaffTable').default
     },
     {
         path: '/admin/credentials',
         name: 'credentials',
-        component: require('./components/admin/credentials/Credentials').default
+        component: require('./views/admin/credentials/Credentials').default
     },
     {
         path: '/admin/roles',
         name: 'roles',
-        component: require('./components/admin/permissions/Role.vue').default
+        component: require('./views/admin/permissions/Role.vue').default
     },
     {
         path: '/admin/*',

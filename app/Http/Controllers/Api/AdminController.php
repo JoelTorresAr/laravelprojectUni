@@ -22,24 +22,29 @@ class AdminController extends Controller
                          'staff.secondlastname')
                 ->get();*/
         $admins = Admin::with([
-            'staff'=>function($query2){
-                $query2->select('id','firstname','firstlastname','secondlastname');
+            'staff' => function ($query2) {
+                $query2->select('id', 'firstname', 'firstlastname', 'secondlastname');
             },
-            'roles' =>function($query){
+            'roles' => function ($query) {
                 $query->select('name');
-            },])->get();
+            },
+        ])->get();
         return $admins;
     }
     public function store(AdminStoreRequest $request)
     {
-        Admin::create([
+        $admin = Admin::create([
             'name' => $request['name'],
             'username' => $request['username'],
             'password' => Hash::make($request['password']),
             'description' => $request['description'],
         ]);
+        if ($request['roles'] !== null) {
+            $admin->assignRole($request['roles']);
+        }
 
-        return ['status' => '200','message' => 'Creado con exito'];
+
+        return ['status' => '200', 'message' => 'Creado con exito'];
     }
 
     /**
@@ -52,14 +57,24 @@ class AdminController extends Controller
     public function update(AdminUpdateRequest $request, $id)
     {
         $admin = Admin::find($id);
-        $admin->fill([
-            'name' => $request['name'],
-            'username' => $request['username'],
-            'password' => Hash::make($request['password']),
-            'description' => $request['description'],
-        ])->save();
+        if ($request['password'] !== null) {
+            $admin->fill([
+                'name' => $request['name'],
+                'username' => $request['username'],
+                'password' => Hash::make($request['password']),
+                'description' => $request['description'],
+            ])->save();
+        } else {
+            $admin->fill([
+                'name' => $request['name'],
+                'username' => $request['username'],
+                'description' => $request['description'],
+            ])->save();
+        }
 
-        return ['status' => '200','message' => 'Editado con exito'];
+        $admin->syncRoles($request['roles']);
+
+        return ['status' => '200', 'message' => 'Editado con exito'];
     }
     /**
      * Assign credential to specific staff.
@@ -75,6 +90,6 @@ class AdminController extends Controller
             'staff_id' => $request['staff_id'],
         ])->save();
 
-        return ['status' => '200','message' => 'Asignado con exito'];
+        return ['status' => '200', 'message' => 'Asignado con exito'];
     }
 }

@@ -26,7 +26,7 @@ class AdminUpdateRequest extends FormRequest
         return  [
             'name' => ['required', 'string', 'max:120'],
             'username' => ['required', 'string','max:120', 'unique:admins,username,'.$this->admin],
-            'password' => ['required', 'string', 'min:8', 'confirmed'],
+            'password' => ['confirmed'],
             'description' => ['required', 'string', 'max:255'],
         ];
     }
