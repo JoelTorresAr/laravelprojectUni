@@ -19,9 +19,14 @@ let routes = [{
         component: require('./views/admin/credentials/Credentials').default
     },
     {
+        path: '/admin/permissions',
+        name: 'permissions',
+        component: require('./views/admin/permissions/Permissions.vue').default
+    },
+    {
         path: '/admin/roles',
         name: 'roles',
-        component: require('./views/admin/permissions/Role.vue').default
+        component: require('./views/admin/roles/roles.vue').default
     },
     {
         path: '/admin/*',

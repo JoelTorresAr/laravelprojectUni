@@ -1,22 +1,27 @@
 <template>
   <v-app id="app">
     <v-data-table
+      :dark="darkStile"
       :headers="headers"
-      :items="credentials"
+      :items="roles"
       item-key="id"
-      sort-by="staff_id"
+      sort-by="name"
       class="elevation-1"
       :loading="loading"
       loading-text="Cargando... Por favor espere"
+      :single-expand="singleExpand"
+      :expanded.sync="expanded"
+      expanded.flat="true"
+      show-expand
     >
       <template v-slot:top>
-        <v-toolbar flat color="white" class="mt-2">
-          <v-toolbar-title>Credenciales</v-toolbar-title>
+        <v-toolbar flat class="mt-2">
+          <v-toolbar-title>Roles</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
-          <v-spacer></v-spacer>
-          <v-dialog v-model="dialogForm" persistent max-width="600px">
+          <v-spacer ></v-spacer>
+          <v-dialog :dark="darkStile" v-model="dialogForm" persistent max-width="600px">
             <template v-slot:activator="{ on }">
-              <v-btn color="primary" class="mb-2" dark v-on="on">Agregar nuevo</v-btn>
+              <v-btn color="primary" class="mb-2" v-on="on">Agregar nuevo</v-btn>
             </template>
             <v-card>
               <v-card-title>
@@ -107,20 +112,29 @@
       </template>
       <template v-slot:item.created_at="{ item }">{{ formatedTime(item.created_at) }}</template>
       <template v-slot:item.updated_at="{ item }">{{ formatedTime(item.updated_at) }}</template>
-      <template v-slot:item.staff_id="{ item }">
-        <v-chip
-          :color="getColor(item.staff_id)"
-          dark
-        >{{ item.staff_id !== null ? "Asignado" : "Sin asignar" }}</v-chip>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          <strong> Permisos: </strong>
+          <v-list-item>
+            <v-list-item-content>
+              <v-row >
+                <v-col
+                  cols="3"
+                  class="text-left"
+                  v-for="(permission, index) in item.permissions"
+                  :key="index">
+                  <v-list-item-title>
+                  <li>{{permission.name}}</li>
+                  </v-list-item-title>
+                  </v-col>
+                <v-col cols="12" class="text-left" v-if="item.permissions.length==0">
+                  <strong>No tiene permisos asignados</strong>
+                </v-col>
+              </v-row>
+            </v-list-item-content>
+          </v-list-item>
+        </td>
       </template>
-      <template v-slot:item.roles="{ item }">
-        <div
-          class="text-left"
-          v-for="(rol, index) in item.roles"
-          :key="index"
-        >{{rol.name }}</div>
-      </template>
-      <template v-slot:item.firstname="{ item }">{{ nameStaff(item) }}</template>
       <template v-slot:item.actions="{ item }">
         <v-btn color="primary" fab x-small dark @click="editItem(item)">
           <v-icon>mdi-pencil</v-icon>
@@ -134,39 +148,6 @@
       </template>
     </v-data-table>
     <!--/v-data-table-->
-    <!--staff-modal-->
-    <template>
-      <v-row justify="center">
-        <v-dialog v-model="dialogStaff" scrollable max-width="300px">
-          <v-card>
-            <v-card-title>Asignar Credencial a:</v-card-title>
-            <v-divider></v-divider>
-            <v-card-text style="height: 300px;">
-              <form @submit.prevent="save">
-                <v-select
-                  v-model="form.staff_id"
-                  :items="staff"
-                  attach
-                  chips
-                  label="Empleados*"
-                  item-text="name"
-                  item-value="id"
-                >
-                  <template slot="selection" slot-scope="{ item }">{{ item.firstname + ' ' + item.firstlastname + ' ' + item.secondlastname}}</template>
-                  <template slot="item" slot-scope="{ item }">{{ item.firstname + ' ' + item.firstlastname + ' ' + item.secondlastname}}</template>
-                </v-select>
-              </form>
-            </v-card-text>
-            <v-divider></v-divider>
-            <v-card-actions>
-              <v-btn color="blue darken-1" text @click="dialogStaff = false">Close</v-btn>
-              <v-btn color="blue darken-1" type="submit" text @click="assignCredential">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-row>
-    </template>
-    <!--/staff-modal-->
   </v-app>
 </template>
 <script>
@@ -175,22 +156,22 @@
 export default {
   data: () => ({
     dialogForm: false,
-    dialogStaff: false,
     loading: true,
+    darkStile:false,
     headers: [
-      { text: "Nombre", value: "name" , align: 'center'},
-      { text: "Username", value: "username" , align: 'center'},
-      { text: "Descripcion", value: "description" , align: 'center'},
-      { text: "Fecha de creación", value: "created_at" , align: 'center'},
-      { text: "Fecha de modificación", value: "updated_at" , align: 'center'},
-      { text: "Estado", value: "staff_id" , align: 'center'},
-      { text: "Roles", value: "roles" , align: 'center'},
-      { text: "Usuario", value: "firstname" , align: 'center'},
-      { text: "Actions", value: "actions", sortable: false }
+      { text: "Nombre", value: "name" },
+      { text: "Fecha de creación", value: "created_at" },
+      { text: "Fecha de modificación", value: "updated_at" },
+      { text: "Descripcion", value: "description" },
+      { text: "Actions", value: "actions", sortable: false },
+      { text: "Permisos", value: "data-table-expand"}
     ],
-    credentials: [],
-    staff: [],
+    expanded: {
+      float: true
+    },    
     roles: [],
+    expanded: [],
+    singleExpand: false,
     editedIndex: -1,
     adminId: "",
     editedItem: new Form({
@@ -201,36 +182,29 @@ export default {
       password_confirmation: "",
       description: "",
       roles: []
-    }),
-    form: new Form({
-      staff_id: ""
     })
   }),
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Nueva credencial" : "Editar credencial";
+      return this.editedIndex === -1 ? "Nuevo rol" : "Editar rol";
     }
   },
 
   watch: {
     dialogForm(val) {
       val || this.close();
-    },
-    dialogStaff(val) {
-      val || this.closeStaffModal();
     }
   },
 
   created() {
     this.initialize();
-    this.getRoles();
   },
 
   methods: {
     initialize() {
-      axios.get("/api/admins").then(response => {
-        this.credentials = response.data;
+      axios.get("/api/roles").then(response => {
+        this.roles = response.data;
         this.loading = false;
       });
     },
@@ -247,25 +221,6 @@ export default {
       for (var i = 0; i < item.roles.length; i++) {
         this.editedItem.roles.push(item.roles[i].name);
       }
-    },
-
-    deleteItem(item) {
-      const index = this.staff.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        this.staff.splice(index, 1);
-    },
-
-    close() {
-      this.dialogForm = false;
-      this.$nextTick(() => {
-        this.editedIndex = -1;
-        this.emptyForm();
-      });
-    },
-    closeStaffModal() {
-      this.dialogStaff = false;
-      this.adminId = "";
-      this.form.staff_id = "";
     },
     save() {
       if (this.editedIndex === -1) {
@@ -297,21 +252,6 @@ export default {
           });
       }
     },
-    assignCredential() {
-      let url = "/api/admins/assign/" + this.adminId;
-      this.form
-        .put(url)
-        .then(({ data }) => {
-          if (data.status == "200") {
-            this.initialize();
-            toastr.success("Credencial asignada con exito");
-            this.close();
-          }
-        })
-        .catch(error => {
-          toastr.error("Error al asignar credencial");
-        });
-    },
     emptyForm() {
       this.editedItem.staff_id = "";
       (this.editedItem.name = ""),
@@ -321,40 +261,21 @@ export default {
         (this.editedItem.description = "");
       this.editedItem.roles = [];
     },
-    showItem(item) {
-      //let itemselected = this.staff.find(element=>element==item);
-      Object.assign(this.editedItem, item);
-      this.dialogInfo = true;
+    deleteItem(item) {
+      const index = this.staff.indexOf(item);
+      confirm("Are you sure you want to delete this item?") &&
+        this.staff.splice(index, 1);
+    },
+
+    close() {
+      this.dialogForm = false;
+      this.$nextTick(() => {
+        this.editedIndex = -1;
+        this.emptyForm();
+      });
     },
     getColor(status) {
       return status !== null ? "green" : "red";
-    },
-    getRoles() {
-      axios.get("/api/roles").then(({ data }) => (this.roles = data));
-    },
-    showStaffModal(item) {
-      let url = "/api/staff/list/noncredential";
-      axios.get(url).then(response => {
-        if (response.data.length > 0) {
-          this.staff = response.data;
-          this.adminId = item.id;
-          this.dialogStaff = true;
-        } else {
-          toastr.warning("Cada empleado tiene una credencial");
-        }
-      });
-    },
-    nameStaff(item) {
-      let name = "";
-      if (item.staff !== null) {
-        name =
-          item.staff.firstname +
-          " " +
-          item.staff.firstlastname +
-          " " +
-          item.staff.secondlastname;
-      }
-      return name;
     },
     formatedTime(t) {
       return moment(t).format("Do MMM YY");

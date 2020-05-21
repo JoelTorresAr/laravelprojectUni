@@ -17,6 +17,17 @@ class RoleController extends Controller
      */
     public function index()
     {
+        $roles = Role::with(['permissions'])->get();
+        return $roles;
+    }
+    
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function listOnlyName()
+    {
         return DB::table('roles')->pluck('name');
     }
 

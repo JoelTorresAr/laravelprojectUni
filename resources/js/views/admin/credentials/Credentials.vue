@@ -8,6 +8,9 @@
       class="elevation-1"
       :loading="loading"
       loading-text="Cargando... Por favor espere"
+      :single-expand="singleExpand"
+      :expanded.sync="expanded"
+      show-expand
     >
       <template v-slot:top>
         <v-toolbar flat color="white" class="mt-2">
@@ -121,6 +124,26 @@
         >{{rol.name }}</div>
       </template>
       <template v-slot:item.firstname="{ item }">{{ nameStaff(item) }}</template>
+      <template v-slot:expanded-item="{ headers, item }">
+        <td :colspan="headers.length">
+          Permisos:
+          <v-list-item>
+            <v-list-item-content>
+              <v-row no-gutters>
+                <v-col
+                  cols="12"
+                  class="text-left"
+                  v-for="(permission, index) in item.roles"
+                  :key="index"
+                >- {{permission.name}}</v-col>
+                <v-col cols="12" class="text-left" v-if="item.roles.length==0">
+                  <strong>No tiene roles asignados</strong>
+                </v-col>
+              </v-row>
+            </v-list-item-content>
+          </v-list-item>
+        </td>
+      </template>
       <template v-slot:item.actions="{ item }">
         <v-btn color="primary" fab x-small dark @click="editItem(item)">
           <v-icon>mdi-pencil</v-icon>
@@ -180,17 +203,19 @@ export default {
     headers: [
       { text: "Nombre", value: "name" , align: 'center'},
       { text: "Username", value: "username" , align: 'center'},
+      { text: "Usuario", value: "firstname" , align: 'center'},
       { text: "Descripcion", value: "description" , align: 'center'},
       { text: "Fecha de creación", value: "created_at" , align: 'center'},
       { text: "Fecha de modificación", value: "updated_at" , align: 'center'},
       { text: "Estado", value: "staff_id" , align: 'center'},
-      { text: "Roles", value: "roles" , align: 'center'},
-      { text: "Usuario", value: "firstname" , align: 'center'},
-      { text: "Actions", value: "actions", sortable: false }
+      { text: "Actions", value: "actions", sortable: false },
+      { text: "Roles", value: "data-table-expand" }
     ],
     credentials: [],
     staff: [],
     roles: [],
+    expanded: [],
+    singleExpand: false,
     editedIndex: -1,
     adminId: "",
     editedItem: new Form({
@@ -321,16 +346,11 @@ export default {
         (this.editedItem.description = "");
       this.editedItem.roles = [];
     },
-    showItem(item) {
-      //let itemselected = this.staff.find(element=>element==item);
-      Object.assign(this.editedItem, item);
-      this.dialogInfo = true;
-    },
     getColor(status) {
       return status !== null ? "green" : "red";
     },
     getRoles() {
-      axios.get("/api/roles").then(({ data }) => (this.roles = data));
+      axios.get("/api/roles/list/OnlyName").then(({ data }) => (this.roles = data));
     },
     showStaffModal(item) {
       let url = "/api/staff/list/noncredential";

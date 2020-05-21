@@ -68,4 +68,5 @@ Route::group(['prefix' => 'admins','namespace' => 'Api'], function () {
 //RolesController
 Route::group(['prefix' => 'roles','namespace' => 'Api'], function () {
     Route::get('/','RoleController@index');
+    Route::get('list/OnlyName','RoleController@listOnlyName');
 });

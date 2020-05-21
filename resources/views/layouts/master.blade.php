@@ -200,7 +200,7 @@
                   <router-link :to="{name: 'roles'}" class="nav-link">
                     <i class="nav-icon fas fa-key"></i>
                     <p>
-                      Permisos
+                      Roles
                     </p>
                   </router-link>
                 </li>
