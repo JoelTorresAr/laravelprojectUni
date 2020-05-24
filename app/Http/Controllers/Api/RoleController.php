@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
 class RoleController extends Controller
 {
@@ -49,7 +50,17 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $role = Role::create([
+            'name' => $request['name'],
+            'guard_name' => 'admin',
+            'description' => $request['description'],
+        ]);
+        if ($request['permissions'] !== null) {
+            $role->syncPermissions($request['permissions']);
+        }
+
+
+        return ['status' => '200', 'message' => 'Creado con exito'];
     }
 
     /**
@@ -83,7 +94,16 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $role = Role::find($id);
+        $role->fill([
+            'name' => $request['name'],
+            'description' => $request['description'],
+        ])->save();
+
+        $role->syncPermissions($request['permissions']);
+
+
+        return ['status' => '200', 'message' => 'Editado con exito'];
     }
 
     /**
@@ -94,6 +114,7 @@ class RoleController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Role::findOrFail($id)->delete();
+        return ['status' => '200', 'message' => 'Eliminado con exito'];
     }
 }

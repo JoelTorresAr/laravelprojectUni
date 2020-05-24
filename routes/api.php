@@ -29,6 +29,7 @@ Route::get('/','StaffController@index');
 Route::get('list/noncredential','StaffController@nonCredentialStaff');
 Route::post('store','StaffController@store')->name('staff.store');
 Route::put('{staff}','StaffController@update');
+Route::delete('destroy/{admin}','StaffController@destroy');
 });
 
 //SubsidiaryController
@@ -64,9 +65,18 @@ Route::group(['prefix' => 'admins','namespace' => 'Api'], function () {
     Route::post('store','AdminController@store'); 
     Route::put('edit/{admin}','AdminController@update');
     Route::put('assign/{admin}','AdminController@assign');
+    Route::delete('destroy/{admin}','AdminController@destroy');
 });
 //RolesController
 Route::group(['prefix' => 'roles','namespace' => 'Api'], function () {
     Route::get('/','RoleController@index');
     Route::get('list/OnlyName','RoleController@listOnlyName');
+    Route::post('store','RoleController@store');
+    Route::put('edit/{role}','RoleController@update');
+    Route::delete('destroy/{role}','RoleController@destroy');
+});
+
+//PermissionController
+Route::group(['prefix' => 'permissions','namespace' => 'Api'], function () {
+    Route::get('list/OnlyName','PermissionController@listOnlyName');
 });

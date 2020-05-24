@@ -4,6 +4,7 @@
     <v-data-table
       :headers="headers"
       :items="staff"
+      :dark="darkStile"
       item-key="id"
       sort-by="subsidiary"
       class="elevation-1"
@@ -11,11 +12,11 @@
       loading-text="Cargando... Por favor espere"
     >
       <template v-slot:top>
-        <v-toolbar flat color="white" class="mt-2">
+        <v-toolbar flat class="mt-2">
           <v-toolbar-title>Personal</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialogForm" persistent max-width="600px">
+          <v-dialog :dark="darkStile" v-model="dialogForm" persistent max-width="600px">
             <template v-if="can('staff.create')" v-slot:activator="{ on }">
               <v-btn color="primary" class="mb-2" dark v-on="on">Agregar nuevo</v-btn>
             </template>
@@ -175,6 +176,9 @@
         </v-btn>
         <v-btn color="teal" fab x-small dark @click="showItem(item)">
           <v-icon>mdi-eye</v-icon>
+        </v-btn>                
+        <v-btn v-if="can('staff.destroy')"  color="red" fab x-small dark @click="deleteItem(item)">
+          <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>
       <template v-slot:no-data>
@@ -184,10 +188,10 @@
     <!--/v-data-table-->
     <!--v-dialog-info-->
     <div class="text-center">
-      <v-dialog v-model="dialogInfo" persistent max-width="600px">
+      <v-dialog :dark="darkStile" v-model="dialogInfo" persistent max-width="600px">
         <v-card>
           <v-card-title
-            class="headline grey lighten-2"
+            class="headline grey"
             primary-title
           >{{editedItem.firstname + ' ' + editedItem.firstlastname+ ' ' + editedItem.secondlastname}}</v-card-title>
 
@@ -295,6 +299,9 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo Personal" : "Editar Personal";
+    },
+    darkStile(){
+      return this.$store.getters.darkStile;
     }
   },
 
@@ -332,9 +339,16 @@ export default {
     },
 
     deleteItem(item) {
+      let url = "/api/staff/destroy/" + item.id;
       const index = this.staff.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
-        this.staff.splice(index, 1);
+        axios.delete(url).then(({data})=>{
+          if (data.status == "200") {
+          this.staff.splice(index, 1);
+          toastr.success("Eliminado con exito");}
+        }).catch(error => {
+            toastr.error("Error al eliminar");
+          });
     },
 
     close() {
@@ -352,7 +366,6 @@ export default {
       if (this.editedIndex > -1) {
         let url = "/api/staff/" + this.staffId;
         this.editedItem.put(url).then(({ data }) => {
-          console.log(data);
           if (data.status == "200") {
             this.initialize();
             this.close();

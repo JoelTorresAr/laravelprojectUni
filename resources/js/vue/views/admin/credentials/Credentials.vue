@@ -4,6 +4,7 @@
       :headers="headers"
       :items="credentials"
       item-key="id"
+      :dark="darkStile"
       sort-by="staff_id"
       class="elevation-1"
       :loading="loading"
@@ -13,12 +14,12 @@
       show-expand
     >
       <template v-slot:top>
-        <v-toolbar flat color="white" class="mt-2">
+        <v-toolbar flat class="mt-2">
           <v-toolbar-title>Credenciales</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
-          <v-dialog v-model="dialogForm" persistent max-width="600px">
-            <template v-slot:activator="{ on }">
+          <v-dialog :dark="darkStile" v-model="dialogForm" persistent max-width="600px">
+            <template v-if="can('admins.create')" v-slot:activator="{ on }">
               <v-btn color="primary" class="mb-2" dark v-on="on">Agregar nuevo</v-btn>
             </template>
             <v-card>
@@ -82,7 +83,6 @@
                         <v-select
                           v-model="editedItem.roles"
                           :items="roles"
-                          attach
                           chips
                           label="Roles"
                           multiple
@@ -97,6 +97,7 @@
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
                 <v-btn
+                  v-if="can('admins.edit')" 
                   color="blue darken-1"
                   :disabled="editedItem.busy"
                   type="submit"
@@ -144,12 +145,15 @@
           </v-list-item>
         </td>
       </template>
-      <template v-slot:item.actions="{ item }">
-        <v-btn color="primary" fab x-small dark @click="editItem(item)">
+      <template  v-slot:item.actions="{ item }">
+        <v-btn v-if="can('admins.edit')" color="primary" fab x-small dark @click="editItem(item)">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn color="blue-grey" fab x-small dark @click="showStaffModal(item)">
+        <v-btn v-if="can('admins.edit')" color="blue-grey" fab x-small dark @click="showStaffModal(item)">
           <v-icon>mdi-account-key</v-icon>
+        </v-btn>        
+        <v-btn v-if="can('admins.destroy')"  color="red" fab x-small dark @click="deleteItem(item)">
+          <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>
       <template v-slot:no-data>
@@ -160,7 +164,7 @@
     <!--staff-modal-->
     <template>
       <v-row justify="center">
-        <v-dialog v-model="dialogStaff" scrollable max-width="300px">
+        <v-dialog :dark="darkStile" v-model="dialogStaff" scrollable max-width="300px">
           <v-card>
             <v-card-title>Asignar Credencial a:</v-card-title>
             <v-divider></v-divider>
@@ -204,11 +208,11 @@ export default {
       { text: "Nombre", value: "name" , align: 'center'},
       { text: "Username", value: "username" , align: 'center'},
       { text: "Usuario", value: "firstname" , align: 'center'},
-      { text: "Descripcion", value: "description" , align: 'center'},
+      { text: "Descripcion", value: "description" ,width: '15rem', align: 'center'},
       { text: "Fecha de creación", value: "created_at" , align: 'center'},
       { text: "Fecha de modificación", value: "updated_at" , align: 'center'},
       { text: "Estado", value: "staff_id" , align: 'center'},
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false},
       { text: "Roles", value: "data-table-expand" }
     ],
     credentials: [],
@@ -235,6 +239,9 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Nueva credencial" : "Editar credencial";
+    },
+    darkStile(){
+      return this.$store.getters.darkStile;
     }
   },
 
@@ -274,9 +281,16 @@ export default {
     },
 
     deleteItem(item) {
-      const index = this.staff.indexOf(item);
+      let url = "/api/admins/destroy/" + item.id;
+      const index = this.credentials.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
-        this.staff.splice(index, 1);
+        axios.delete(url).then(({data})=>{
+          if (data.status == "200") {
+          this.credentials.splice(index, 1);
+          toastr.success("Eliminado con exito");}
+        }).catch(error => {
+            toastr.error("Error al eliminar");
+          });
     },
 
     close() {

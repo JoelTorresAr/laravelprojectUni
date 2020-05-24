@@ -3,33 +3,40 @@ require('./bootstrap');
 // --Vue--
 window.Vue = require('vue');
 
-// Componentes
+//suport Componentes
 Vue.component('spinner', require('./vue/widgets/Spinner').default);
 //Vue.component('staff-table', require('./components/admin/staff/staffTable').default);
 
-// Rutas
+//suport Rutas
 import router from './vue/plugins/routes'
 
-// Formularios
+//support Formularios
 import { Form, HasError, AlertError } from 'vform'
 
 window.Form = Form;
 Vue.component(HasError.name, HasError)
 Vue.component(AlertError.name, AlertError)
 
-// vue-the-mask
+//support vue-the-mask
 import VueTheMask from 'vue-the-mask'
 Vue.use(VueTheMask)
 
-// vuetify
+//support vuetify
 import vuetify from './vue/plugins/vuetify'
 
-//Laravel permission to vuejs
-import LaravelPermissionToVueJS from './vue/plugins/laravel-permission-to-vuejs';
-Vue.use(LaravelPermissionToVueJS);
+//support Laravel permission to vuejs
+import LaravelPermissionToVueJS from './vue/plugins/laravel-permission-to-vuejs'
+Vue.use(LaravelPermissionToVueJS)
+
+// support vuex
+import Vuex from 'vuex'
+Vue.use(Vuex)
+import storeData from "./vue/store/index"
+const store = new Vuex.Store(storeData)
 
 const app = new Vue({
     el: '#app',
     router,
-    vuetify
+    vuetify,
+    store
 });

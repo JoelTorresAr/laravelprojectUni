@@ -92,4 +92,16 @@ class AdminController extends Controller
 
         return ['status' => '200', 'message' => 'Asignado con exito'];
     }
+
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function destroy($id)
+    {
+        Admin::findOrFail($id)->delete();
+        return ['status' => '200', 'message' => 'Eliminado con exito'];
+    }
 }

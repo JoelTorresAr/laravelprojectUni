@@ -18,9 +18,9 @@
         <v-toolbar flat class="mt-2">
           <v-toolbar-title>Roles</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
-          <v-spacer ></v-spacer>
+          <v-spacer></v-spacer>
           <v-dialog :dark="darkStile" v-model="dialogForm" persistent max-width="600px">
-            <template v-slot:activator="{ on }">
+            <template v-if="can('admins.create')"  v-slot:activator="{ on }">
               <v-btn color="primary" class="mb-2" v-on="on">Agregar nuevo</v-btn>
             </template>
             <v-card>
@@ -41,6 +41,36 @@
                         <has-error :form="editedItem" field="name"></has-error>
                       </v-col>
                       <v-col cols="12">
+                        <v-autocomplete
+                          :dark="darkStile"
+                          v-model="editedItem.permissions"
+                          :items="permissions"
+                          clearable
+                          dense
+                          chips
+                          small-chips
+                          label="Permisos"
+                          multiple
+                        >
+                          <template v-slot:selection="{attrs, item, select, selected, index }">
+                            <v-chip
+                              v-bind="attrs"
+                              :input-value="selected"
+                              close
+                              @click="select"
+                              @click:close="remove(item)"
+                              v-if="index < 2"
+                            >
+                              <span>{{ item }}</span>
+                            </v-chip>
+                            <span
+                              v-if="index === 2"
+                              class="grey--text caption"
+                            >(+{{ editedItem.permissions.length - 2 }} otros)</span>
+                          </template>
+                        </v-autocomplete>
+                      </v-col>
+                      <v-col cols="12">
                         <v-textarea
                           v-model="editedItem.description"
                           auto-grow
@@ -51,16 +81,6 @@
                         ></v-textarea>
                         <has-error :form="editedItem" field="description"></has-error>
                       </v-col>
-                      <v-col cols="12">
-                        <v-select
-                          v-model="editedItem.permissions"
-                          :items="permissions"
-                          attach
-                          chips
-                          label="Permisos"
-                          multiple
-                        ></v-select>
-                      </v-col>
                     </v-row>
                   </v-container>
                 </form>
@@ -70,6 +90,7 @@
                 <v-spacer></v-spacer>
                 <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
                 <v-btn
+                 v-if="can('admins.edit')" 
                   color="blue darken-1"
                   :disabled="editedItem.busy"
                   type="submit"
@@ -85,19 +106,20 @@
       <template v-slot:item.updated_at="{ item }">{{ formatedTime(item.updated_at) }}</template>
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length">
-          <strong> Permisos: </strong>
+          <strong>Permisos:</strong>
           <v-list-item>
             <v-list-item-content>
-              <v-row >
+              <v-row>
                 <v-col
                   cols="3"
                   class="text-left"
                   v-for="(permission, index) in item.permissions"
-                  :key="index">
+                  :key="index"
+                >
                   <v-list-item-title>
-                  <li>{{permission.name}}</li>
+                    <li>{{permission.name}}</li>
                   </v-list-item-title>
-                  </v-col>
+                </v-col>
                 <v-col cols="12" class="text-left" v-if="item.permissions.length==0">
                   <strong>No tiene permisos asignados</strong>
                 </v-col>
@@ -107,11 +129,11 @@
         </td>
       </template>
       <template v-slot:item.actions="{ item }">
-        <v-btn color="primary" fab x-small dark @click="editItem(item)">
+        <v-btn v-if="can('admins.edit')"  color="primary" fab x-small dark @click="editItem(item)">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn color="blue-grey" fab x-small dark @click="showStaffModal(item)">
-          <v-icon>mdi-account-key</v-icon>
+        <v-btn v-if="can('admins.destroy')"  color="red" fab x-small dark @click="deleteItem(item)">
+          <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>
       <template v-slot:no-data>
@@ -122,21 +144,19 @@
   </v-app>
 </template>
 <script>
-//import moment from 'moment'
-
 export default {
   data: () => ({
     dialogForm: false,
     loading: true,
-    darkStile:true,
     headers: [
       { text: "Nombre", value: "name" },
       { text: "Fecha de creación", value: "created_at" },
       { text: "Fecha de modificación", value: "updated_at" },
       { text: "Descripción", value: "description" },
       { text: "Actions", value: "actions", sortable: false },
-      { text: "Permisos", value: "data-table-expand"}
-    ],   
+      { text: "Permisos", value: "data-table-expand" }
+    ],
+    roles: [],
     permissions: [],
     expanded: [],
     singleExpand: false,
@@ -152,6 +172,9 @@ export default {
   computed: {
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo rol" : "Editar rol";
+    },
+    darkStile() {
+      return this.$store.getters.darkStile;
     }
   },
 
@@ -163,6 +186,7 @@ export default {
 
   created() {
     this.initialize();
+    this.getPermissions();
   },
 
   methods: {
@@ -173,22 +197,20 @@ export default {
       });
     },
     editItem(item) {
-      (this.editedIndex = { id: item.id }),
-      (this.editedItem.staff_id = item.staff_id),
-      (this.editedItem.name = item.name),
-      (this.editedItem.username = item.username),
-      (this.editedItem.description = item.description),
-      (this.rolId = item.id),
-      (this.dialogForm = true),
-      (this.editedItem.roles = []);
-      for (var i = 0; i < item.roles.length; i++) {
-        this.editedItem.roles.push(item.roles[i].name);
+        (this.editedIndex = { id: item.id }),
+        (this.editedItem.name = item.name),
+        (this.editedItem.description = item.description),
+        (this.rolId = item.id),
+        (this.dialogForm = true),
+        (this.editedItem.permissions = []);
+      for (var i = 0; i < item.permissions.length; i++) {
+        this.editedItem.permissions.push(item.permissions[i].name);
       }
     },
     save() {
       if (this.editedIndex === -1) {
         this.editedItem
-          .post("/api/admins/store")
+          .post("/api/roles/store")
           .then(({ data }) => {
             if (data.status == "200") {
               this.initialize();
@@ -200,7 +222,7 @@ export default {
             toastr.error("Error al registrar");
           });
       } else {
-        let url = "/api/admins/edit/" + this.adminId;
+        let url = "/api/roles/edit/" + this.rolId;
         this.editedItem
           .put(url)
           .then(({ data }) => {
@@ -216,18 +238,21 @@ export default {
       }
     },
     emptyForm() {
-      this.editedItem.staff_id = "";
       (this.editedItem.name = ""),
-        (this.editedItem.username = ""),
-        (this.editedItem.password = ""),
-        (this.editedItem.password_confirmation = ""),
-        (this.editedItem.description = "");
-      this.editedItem.roles = [];
+        (this.editedItem.description = ""),
+        (this.editedItem.permissions = []);
     },
     deleteItem(item) {
-      const index = this.staff.indexOf(item);
+      let url = "/api/roles/destroy/" + item.id;
+      const index = this.roles.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
-        this.staff.splice(index, 1);
+        axios.delete(url).then(({data})=>{
+          if (data.status == "200") {
+          this.roles.splice(index, 1);
+          toastr.success("Eliminado con exito");}
+        }).catch(error => {
+            toastr.error("Error al eliminar");
+          });
     },
 
     close() {
@@ -235,6 +260,18 @@ export default {
       this.$nextTick(() => {
         this.editedIndex = -1;
         this.emptyForm();
+      });
+    },
+    remove(item) {
+      this.editedItem.permissions.splice(
+        this.editedItem.permissions.indexOf(item),
+        1
+      );
+      this.editedItem.permissions = [...this.editedItem.permissions];
+    },
+    getPermissions() {
+      axios.get("/api/permissions/list/OnlyName").then(({ data }) => {
+        this.permissions = data;
       });
     },
     getColor(status) {

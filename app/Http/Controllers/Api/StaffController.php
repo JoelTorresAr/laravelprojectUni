@@ -114,6 +114,7 @@ class StaffController extends Controller
      */
     public function destroy($id)
     {
-        Staff::find($id)->delete();
+        Staff::findOrFail($id)->delete();
+        return ['status' => '200', 'message' => 'Eliminado con exito'];
     }
 }
