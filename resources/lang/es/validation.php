@@ -186,6 +186,7 @@ return [
         'firstlastname'         => 'apellido paterno',
         'secondlastname'        => 'apellido materno',
         'subsidiary_id'         => 'sucursal',
-        'workposition_id'       => 'puesto de trabajo'
+        'workposition_id'       => 'puesto de trabajo',
+        'workstation_id'        => 'área de trabajo'
     ],
 ];

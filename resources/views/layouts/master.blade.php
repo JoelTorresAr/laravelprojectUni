@@ -187,6 +187,41 @@
               </ul>
             </li>
             <!--/Productos-->
+            <!--Permisos-->
+            <li class="nav-item has-treeview">
+              <a href="#" class="nav-link">
+                <i class="nav-icon fas fa-user-lock"></i>
+                <p>
+                  Autenticación
+                  <i class="right fas fa-angle-left"></i>
+                </p>
+              </a>
+              <ul class="nav nav-treeview">
+                <li class="nav-item">
+                  <router-link :to="{name: 'credentials'}" class="nav-link">
+                    <i class="nav-icon fa fa-id-card"></i>
+                    <p>Credenciales</p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'roles'}" class="nav-link">
+                    <i class="nav-icon fab fa-keycdn"></i>
+                    <p>
+                      Roles
+                    </p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'permissions'}" class="nav-link">
+                    <i class="nav-icon fas fa-key"></i>
+                    <p>
+                      Permisos
+                    </p>
+                  </router-link>
+                </li>
+              </ul>
+            </li>
+            <!--/Permisos-->
             <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-cogs"></i>
@@ -197,24 +232,68 @@
               </a>
               <ul class="nav nav-treeview">
                 <li class="nav-item">
-                  <router-link :to="{name: 'roles'}" class="nav-link">
-                    <i class="nav-icon fas fa-key"></i>
+                  <router-link :to="{name: 'workstations'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
                     <p>
-                      Roles
+                      Area
                     </p>
                   </router-link>
                 </li>
                 <li class="nav-item">
-                  <router-link :to="{name: 'credentials'}" class="nav-link">
-                    <i class="nav-icon fa fa-id-card"></i>
-                    <p>Credenciales</p>
+                  <router-link :to="{name: 'workpositions'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Puesto
+                    </p>
                   </router-link>
                 </li>
                 <li class="nav-item">
-                  <a href="./index2.html" class="nav-link">
-                    <i class="nav-icon fa fa-plus-circle "></i>
-                    <p>Agregar</p>
-                  </a>
+                  <router-link :to="{name: 'cities'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Ciudad
+                    </p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'districts'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Distrito
+                    </p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'subsidiaries'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Subsidiaria
+                    </p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'offers'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Oferta
+                    </p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'providers'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Proveedor
+                    </p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'categories'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Categoria
+                    </p>
+                  </router-link>
                 </li>
               </ul>
             </li>

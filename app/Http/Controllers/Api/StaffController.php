@@ -18,7 +18,7 @@ class StaffController extends Controller
      */
     public function index()
     {
-        return  DB::table('staff')
+        return DB::table('staff')
         ->join('subsidiaries','staff.subsidiary_id','=','subsidiaries.id')
         ->join('workpositions','staff.workposition_id','=','workpositions.id')
         ->join('workstations','workpositions.workstation_id','=','workstations.id')

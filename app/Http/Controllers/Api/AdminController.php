@@ -21,7 +21,7 @@ class AdminController extends Controller
                          'admins.updated_at','staff.firstname','staff.firstlastname',
                          'staff.secondlastname')
                 ->get();*/
-        $admins = Admin::with([
+        return Admin::with([
             'staff' => function ($query2) {
                 $query2->select('id', 'firstname', 'firstlastname', 'secondlastname');
             },
@@ -29,8 +29,14 @@ class AdminController extends Controller
                 $query->select('name');
             },
         ])->get();
-        return $admins;
     }
+    
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
     public function store(AdminStoreRequest $request)
     {
         $admin = Admin::create([
@@ -56,7 +62,7 @@ class AdminController extends Controller
      */
     public function update(AdminUpdateRequest $request, $id)
     {
-        $admin = Admin::find($id);
+        $admin = Admin::findOrFail($id);
         if ($request['password'] !== null) {
             $admin->fill([
                 'name' => $request['name'],
@@ -85,7 +91,7 @@ class AdminController extends Controller
      */
     public function assign(AdminAssignRequest $request, $id)
     {
-        $admin = Admin::find($id);
+        $admin = Admin::findOrFail($id);
         $admin->fill([
             'staff_id' => $request['staff_id'],
         ])->save();

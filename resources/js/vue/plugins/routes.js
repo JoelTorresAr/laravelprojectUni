@@ -11,22 +11,62 @@ let routes = [{
     {
         path: '/admin/staff',
         name: 'staff',
-        component: require('../views/admin/staff/StaffTable').default
+        component: require('../views/admin/StaffTable').default
     },
     {
         path: '/admin/credentials',
         name: 'credentials',
-        component: require('../views/admin/credentials/Credentials').default
+        component: require('../views/admin/Credentials').default
     },
     {
         path: '/admin/permissions',
         name: 'permissions',
-        component: require('../views/admin/permissions/Permissions').default
+        component: require('../views/admin/Permissions').default
     },
     {
         path: '/admin/roles',
         name: 'roles',
-        component: require('../views/admin/roles/roles').default
+        component: require('../views/admin/roles').default
+    },
+    {
+        path: '/admin/workstations',
+        name: 'workstations',
+        component: require('../views/admin/workstations').default
+    },
+    {
+        path: '/admin/workpositions',
+        name: 'workpositions',
+        component: require('../views/admin/workpositions').default
+    },
+    {
+        path: '/admin/cities',
+        name: 'cities',
+        component: require('../views/admin/cities').default
+    },
+    {
+        path: '/admin/districts',
+        name: 'districts',
+        component: require('../views/admin/districts').default
+    },
+    {
+        path: '/admin/subsidiaries',
+        name: 'subsidiaries',
+        component: require('../views/admin/subsidiaries').default
+    },
+    {
+        path: '/admin/offers',
+        name: 'offers',
+        component: require('../views/admin/offers').default
+    },
+    {
+        path: '/admin/providers',
+        name: 'providers',
+        component: require('../views/admin/providers').default
+    },
+    {
+        path: '/admin/categories',
+        name: 'categories',
+        component: require('../views/admin/categories').default
     },
     {
         path: '/admin/*',
