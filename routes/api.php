@@ -35,6 +35,9 @@ Route::delete('destroy/{staff}','StaffController@destroy');
 //SubsidiaryController
 Route::group(['prefix' => 'subsidiaries','namespace' => 'Api'], function () {
 Route::get('/','SubsidiaryController@index');
+Route::post('store','SubsidiaryController@store');
+Route::put('update/{subsidiary}','SubsidiaryController@update');
+Route::delete('destroy/{subsidiary}','SubsidiaryController@destroy');
 });
 
 //WorkstationController
@@ -96,4 +99,28 @@ Route::group(['prefix' => 'permissions','namespace' => 'Api'], function () {
     Route::post('store','PermissionController@store');
     Route::put('update/{permission}','PermissionController@update');
     Route::delete('destroy/{permission}','PermissionController@destroy');
+});
+
+//CategoryController
+Route::group(['prefix' => 'categories','namespace' => 'Api'], function () {
+    Route::get('/','CategoryController@index');
+    Route::post('store','CategoryController@store');
+    Route::put('update/{category}','CategoryController@update');
+    Route::delete('destroy/{category}','CategoryController@destroy');
+});
+
+//OfferController
+Route::group(['prefix' => 'offers','namespace' => 'Api'], function () {
+    Route::get('/','OfferController@index');
+    Route::post('store','OfferController@store');
+    Route::put('update/{offer}','OfferController@update');
+    Route::delete('destroy/{offer}','OfferController@destroy');
+});
+
+//ProviderController
+Route::group(['prefix' => 'providers','namespace' => 'Api'], function () {
+    Route::get('/','ProviderController@index');
+    Route::post('store','ProviderController@store');
+    Route::put('update/{provider}','ProviderController@update');
+    Route::delete('destroy/{provider}','ProviderController@destroy');
 });

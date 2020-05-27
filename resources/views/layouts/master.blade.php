@@ -235,7 +235,7 @@
                   <router-link :to="{name: 'workstations'}" class="nav-link">
                   <i class="nav-icon fas fa-circle-notch"></i>
                     <p>
-                      Area
+                      Areas de trabajo
                     </p>
                   </router-link>
                 </li>
@@ -243,7 +243,7 @@
                   <router-link :to="{name: 'workpositions'}" class="nav-link">
                   <i class="nav-icon fas fa-circle-notch"></i>
                     <p>
-                      Puesto
+                      Puestos de trabajo
                     </p>
                   </router-link>
                 </li>
@@ -251,7 +251,7 @@
                   <router-link :to="{name: 'cities'}" class="nav-link">
                   <i class="nav-icon fas fa-circle-notch"></i>
                     <p>
-                      Ciudad
+                      Ciudades
                     </p>
                   </router-link>
                 </li>
@@ -259,7 +259,7 @@
                   <router-link :to="{name: 'districts'}" class="nav-link">
                   <i class="nav-icon fas fa-circle-notch"></i>
                     <p>
-                      Distrito
+                      Distritos
                     </p>
                   </router-link>
                 </li>
@@ -267,7 +267,7 @@
                   <router-link :to="{name: 'subsidiaries'}" class="nav-link">
                   <i class="nav-icon fas fa-circle-notch"></i>
                     <p>
-                      Subsidiaria
+                      Sucursales
                     </p>
                   </router-link>
                 </li>
@@ -275,7 +275,7 @@
                   <router-link :to="{name: 'offers'}" class="nav-link">
                   <i class="nav-icon fas fa-circle-notch"></i>
                     <p>
-                      Oferta
+                      Ofertas
                     </p>
                   </router-link>
                 </li>
@@ -283,7 +283,7 @@
                   <router-link :to="{name: 'providers'}" class="nav-link">
                   <i class="nav-icon fas fa-circle-notch"></i>
                     <p>
-                      Proveedor
+                      Proveedores
                     </p>
                   </router-link>
                 </li>
@@ -291,7 +291,7 @@
                   <router-link :to="{name: 'categories'}" class="nav-link">
                   <i class="nav-icon fas fa-circle-notch"></i>
                     <p>
-                      Categoria
+                      Categorias
                     </p>
                   </router-link>
                 </li>

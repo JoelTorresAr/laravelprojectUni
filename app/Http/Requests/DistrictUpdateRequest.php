@@ -24,7 +24,7 @@ class DistrictUpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'name'    => ['string','required','max:120','unique:districts,name,'.$this->district],
+            'name'    => ['string','required','max:120'],
             'city_id' => ['integer','required']
         ];
     }

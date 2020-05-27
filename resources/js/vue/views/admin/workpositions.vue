@@ -12,7 +12,7 @@
     >
       <template v-slot:top>
         <v-toolbar flat class="mt-2">
-          <v-toolbar-title>Areas de trabajo</v-toolbar-title>
+          <v-toolbar-title>Puestos de trabajo</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-dialog :dark="darkStile" v-model="dialogForm" persistent max-width="600px">
@@ -31,7 +31,7 @@
                         <v-select
                           v-model="editedItem.workstation_id"
                           :items="workstations"
-                          label="Area de trabajo"
+                          label="Area de trabajo*"
                           required
                           item-text="name"
                           item-value="id"
@@ -110,7 +110,7 @@ export default {
 
   computed: {
     formTitle() {
-      return this.editedIndex === -1 ? "Nueva area" : "Editar area";
+      return this.editedIndex === -1 ? "Nuevo puesto de trabajo" : "Editar puesto de trabajo";
     },
     darkStile() {
       return this.$store.getters.darkStile;

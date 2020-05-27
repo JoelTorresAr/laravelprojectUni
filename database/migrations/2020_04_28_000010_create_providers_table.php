@@ -20,8 +20,8 @@ class CreateProvidersTable extends Migration
             $table->string('address2')->nullable();
             $table->string('ruc');
             $table->string('name');
-            $table->integer('phone1');
-            $table->integer('phone2')->nullable();
+            $table->string('phone1');
+            $table->string('phone2')->nullable();
             $table->timestamps();
         });
     }

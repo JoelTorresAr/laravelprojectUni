@@ -86,8 +86,6 @@ export default {
       { text: "Actions", value: "actions", sortable: false },
     ],
     workstations: [],
-    expanded: [],
-    singleExpand: false,
     editedIndex: -1,
     itemSelectedId: "",
     editedItem: new Form({
@@ -124,7 +122,6 @@ export default {
     editItem(item) {
         (this.editedIndex = { id: item.id }),
         (this.editedItem.name = item.name),
-        (this.editedItem.description = item.description),
         (this.itemSelectedId = item.id),
         (this.dialogForm = true);
     },
