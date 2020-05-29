@@ -124,3 +124,11 @@ Route::group(['prefix' => 'providers','namespace' => 'Api'], function () {
     Route::put('update/{provider}','ProviderController@update');
     Route::delete('destroy/{provider}','ProviderController@destroy');
 });
+
+//IgvController
+Route::group(['prefix' => 'igvs','namespace' => 'Api'], function () {
+    Route::get('/','IgvController@index');
+    Route::post('store','IgvController@store');
+    Route::put('update/{provider}','IgvController@update');
+    Route::delete('destroy/{provider}','IgvController@destroy');
+});

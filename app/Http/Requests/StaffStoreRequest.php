@@ -28,11 +28,11 @@ class StaffStoreRequest extends FormRequest
             'workposition_id'   => ['required','integer'],
             'district_id'       => ['required','integer'],
             'address'           => ['required','string'],
-            'firstname'         => ['required','string'],
-            'firstlastname'     => ['required','string'],
-            'secondlastname'    => ['required','string'],
+            'name'              => ['required','string'],
+            'lastname'          => ['required','string'],
             'phone'             => ['required'],
             'email'             => ['required','email'],
+            'birthday'          => ['required','date'],
         ];
     }
 }

@@ -1,6 +1,6 @@
 <template>
   <v-app id="app">
-    <div  v-if="can('edit post')">You can edit posts.</div>
+    <div v-if="can('edit post')">You can edit posts.</div>
     <v-data-table
       :headers="headers"
       :items="staff"
@@ -28,34 +28,25 @@
                 <form @submit.prevent="save">
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="6" md="4">
+                      <v-col cols="12" md="6">
                         <v-text-field
-                          v-model="editedItem.firstname"
+                          v-model="editedItem.name"
                           label="Nombres*"
                           required
-                          :class="{ 'is-invalid': editedItem.errors.has('firstname') }"
+                          :class="{ 'is-invalid': editedItem.errors.has('name') }"
                         ></v-text-field>
-                        <has-error :form="editedItem" field="firstname"></has-error>
+                        <has-error :form="editedItem" field="name"></has-error>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
+                      <v-col cols="12" md="6">
                         <v-text-field
-                          v-model="editedItem.firstlastname"
-                          label="Apellido paterno*"
+                          v-model="editedItem.lastname"
+                          label="Apellidos*"
                           required
-                          :class="{ 'is-invalid': editedItem.errors.has('firstlastname') }"
+                          :class="{ 'is-invalid': editedItem.errors.has('lastname') }"
                         ></v-text-field>
-                        <has-error :form="editedItem" field="firstlastname"></has-error>
+                        <has-error :form="editedItem" field="lastname"></has-error>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field
-                          v-model="editedItem.secondlastname"
-                          label="Apellido materno*"
-                          required
-                          :class="{ 'is-invalid': editedItem.errors.has('secondlastname') }"
-                        ></v-text-field>
-                        <has-error :form="editedItem" field="secondlastname"></has-error>
-                      </v-col>
-                      <v-col cols="12">
+                      <v-col cols="12" md="6">
                         <v-text-field
                           v-model="editedItem.email"
                           label="Email*"
@@ -65,7 +56,7 @@
                         ></v-text-field>
                         <has-error :form="editedItem" field="email"></has-error>
                       </v-col>
-                      <v-col cols="12">
+                      <v-col cols="12" md="6">
                         <v-text-field
                           label="Celular*"
                           v-model="editedItem.phone"
@@ -90,7 +81,33 @@
                         <has-error :form="editedItem" field="subsidiary_id"></has-error>
                       </v-col>
                       <v-col cols="12" sm="6">
-                        <v-select :items="['0-17', '18-29', '30-54', '54+']" label="Edad*" required></v-select>
+                        <template>
+                          <v-menu
+                            ref="menu"
+                            v-model="menu"
+                            :close-on-content-click="false"
+                            transition="scale-transition"
+                            offset-y
+                            min-width="290px"
+                            :dark="darkStile"
+                          >
+                            <template v-slot:activator="{ on }">
+                              <v-text-field
+                                v-model="editedItem.birthday"
+                                label="Fecha de nacimiento*"
+                                readonly
+                                v-on="on"
+                              ></v-text-field>
+                            </template>
+                            <v-date-picker
+                              ref="picker"
+                              v-model="editedItem.birthday"
+                              :max="new Date().toISOString().substr(0, 10)"
+                              min="1950-01-01"
+                              @change="saveDate"
+                            ></v-date-picker>
+                          </v-menu>
+                        </template>
                       </v-col>
                       <v-col cols="12" sm="6">
                         <v-select
@@ -154,14 +171,14 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
+                <v-btn color="red darken-1" text @click="close">Cancelar</v-btn>
                 <v-btn
                   color="blue darken-1"
                   :disabled="editedItem.busy"
                   type="submit"
                   text
                   @click="save"
-                >Save</v-btn>
+                >Guardar</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
@@ -176,8 +193,8 @@
         </v-btn>
         <v-btn color="teal" fab x-small dark @click="showItem(item)">
           <v-icon>mdi-eye</v-icon>
-        </v-btn>                
-        <v-btn v-if="can('staff.destroy')"  color="red" fab x-small dark @click="deleteItem(item)">
+        </v-btn>
+        <v-btn v-if="can('staff.destroy')" color="red" fab x-small dark @click="deleteItem(item)">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>
@@ -193,7 +210,7 @@
           <v-card-title
             class="headline grey"
             primary-title
-          >{{editedItem.firstname + ' ' + editedItem.firstlastname+ ' ' + editedItem.secondlastname}}</v-card-title>
+          >{{editedItem.name + ' ' + editedItem.lastname}}</v-card-title>
 
           <v-card-text class="text--primary">
             <v-container>
@@ -249,7 +266,7 @@
 
           <v-card-actions>
             <v-spacer></v-spacer>
-            <v-btn color="primary" text @click="closeDialogInfo">Acepto</v-btn>
+            <v-btn color="primary" text @click="closeDialogInfo">Cerrar</v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
@@ -263,10 +280,10 @@ export default {
     dialogForm: false,
     dialogInfo: false,
     loading: true,
+    menu: false,
     headers: [
-      { text: "Nombre", value: "firstname" },
-      { text: "Apellido P.", value: "firstlastname" },
-      { text: "Apellidos M.", value: "secondlastname" },
+      { text: "Nombre", value: "name" },
+      { text: "Apellidos", value: "lastname" },
       { text: "Sucursal", value: "subsidiary" },
       { text: "Puesto", value: "workposition" },
       { text: "Estado", value: "status" },
@@ -288,11 +305,11 @@ export default {
       district_id: "",
       address: "",
       address2: "",
-      firstname: "",
-      firstlastname: "",
-      secondlastname: "",
+      name: "",
+      lastname: "",
       phone: "",
-      email: ""
+      email: "",
+      birthday: null
     })
   }),
 
@@ -300,7 +317,7 @@ export default {
     formTitle() {
       return this.editedIndex === -1 ? "Nuevo Personal" : "Editar Personal";
     },
-    darkStile(){
+    darkStile() {
       return this.$store.getters.darkStile;
     }
   },
@@ -308,6 +325,9 @@ export default {
   watch: {
     dialogForm(val) {
       val || this.close();
+    },
+    menu(val) {
+      val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
     }
   },
 
@@ -318,7 +338,7 @@ export default {
 
   methods: {
     initialize() {
-      axios.get("/api/staff").then(({data}) => {
+      axios.get("/api/staff").then(({ data }) => {
         this.staff = data;
         this.loading = false;
       });
@@ -342,11 +362,15 @@ export default {
       let url = "/api/staff/destroy/" + item.id;
       const index = this.staff.indexOf(item);
       confirm("Are you sure you want to delete this item?") &&
-        axios.delete(url).then(({data})=>{
-          if (data.status == "200") {
-          this.staff.splice(index, 1);
-          toastr.success("Eliminado con exito");}
-        }).catch(error => {
+        axios
+          .delete(url)
+          .then(({ data }) => {
+            if (data.status == "200") {
+              this.staff.splice(index, 1);
+              toastr.success("Eliminado con exito");
+            }
+          })
+          .catch(error => {
             toastr.error("Error al eliminar");
           });
     },
@@ -362,24 +386,33 @@ export default {
       this.emptyForm();
       this.dialogInfo = false;
     },
+    saveDate(date) {
+      this.$refs.menu.save(date);
+    },
     save() {
-      if (this.editedIndex > -1) {
+      if (this.editedIndex === -1) {
+        
+        this.editedItem.post("/api/staff/store").then(({ data }) => {
+          if (data.status == "200") {
+             this.initialize();
+              toastr.success("Registrado con exito");
+              this.close();
+          }
+        }).catch(error => {
+            toastr.error("Error al registrar");
+          });
+      } else {
         let url = "/api/staff/update/" + this.staffId;
         this.editedItem.put(url).then(({ data }) => {
           if (data.status == "200") {
-            this.initialize();
-            this.close();
-          }
-        });
-      } else {
-        this.editedItem.post("/api/staff/store").then(({ data }) => {
-          console.log(data);
-          if (data.status == "200") {
-            //this.staff.push(this.editedItem);
-            this.initialize();
-            this.close();
-          }
-        });
+              this.initialize();
+              toastr.success("Editado con exito");
+              this.close();
+            }
+          })
+          .catch(error => {
+            toastr.error("Error al editar");
+          });
       }
     },
     emptyForm() {
@@ -388,9 +421,8 @@ export default {
         (this.editedItem.district_id = ""),
         (this.editedItem.address = ""),
         (this.editedItem.address2 = ""),
-        (this.editedItem.firstname = ""),
-        (this.editedItem.firstlastname = ""),
-        (this.editedItem.secondlastname = ""),
+        (this.editedItem.name = ""),
+        (this.editedItem.lastname = ""),
         (this.editedItem.phone = ""),
         (this.editedItem.email = "");
     },
@@ -443,7 +475,7 @@ export default {
       this.getSubsidiaries();
       this.getCities();
       this.getWorkstations();
-    },
+    }
   }
 };
 </script>

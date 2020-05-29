@@ -295,6 +295,14 @@
                     </p>
                   </router-link>
                 </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'igvs'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      IGV
+                    </p>
+                  </router-link>
+                </li>
               </ul>
             </li>
             <li class="nav-item">

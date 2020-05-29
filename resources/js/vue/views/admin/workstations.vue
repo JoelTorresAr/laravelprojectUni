@@ -43,7 +43,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1" text @click="close">Cancelar</v-btn>
+                <v-btn color="red darken-1" text @click="close">Cancelar</v-btn>
                 <v-btn
                  v-if="can('admins.edit')" 
                   color="blue darken-1"
@@ -51,7 +51,7 @@
                   type="submit"
                   text
                   @click="save"
-                >Save</v-btn>
+                >Guardar</v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>

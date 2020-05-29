@@ -11,10 +11,10 @@ class Staff extends Model
     'workposition_id',
     'district_id'    ,
     'address'        ,
-    'firstname'      ,
-    'firstlastname'  ,
-    'secondlastname' ,
+    'name'      ,
+    'lastname'  ,
     'phone'          ,
-    'email'  
+    'email',
+    'birthday'
   ];
 }

@@ -20,11 +20,11 @@ class CreateStaffTable extends Migration
             $table->foreignId('district_id')->constrained();
             $table->string('address');
             $table->string('address2')->nullable();
-            $table->string('firstname');
-            $table->string('firstlastname');
-            $table->string('secondlastname');
+            $table->string('name');
+            $table->string('lastname');
             $table->string('phone');
             $table->string('email');
+            $table->date('birthday');
             $table->enum('status',['activo','inactivo'])->default('activo');
             $table->string('avatar')->nullable();
             $table->timestamps();

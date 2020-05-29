@@ -26,47 +26,52 @@ let routes = [{
     {
         path: '/admin/roles',
         name: 'roles',
-        component: require('../views/admin/roles').default
+        component: require('../views/admin/Roles').default
     },
     {
         path: '/admin/workstations',
         name: 'workstations',
-        component: require('../views/admin/workstations').default
+        component: require('../views/admin/Workstations').default
     },
     {
         path: '/admin/workpositions',
         name: 'workpositions',
-        component: require('../views/admin/workpositions').default
+        component: require('../views/admin/Workpositions').default
     },
     {
         path: '/admin/cities',
         name: 'cities',
-        component: require('../views/admin/cities').default
+        component: require('../views/admin/Cities').default
     },
     {
         path: '/admin/districts',
         name: 'districts',
-        component: require('../views/admin/districts').default
+        component: require('../views/admin/Districts').default
     },
     {
         path: '/admin/subsidiaries',
         name: 'subsidiaries',
-        component: require('../views/admin/subsidiaries').default
+        component: require('../views/admin/Subsidiaries').default
     },
     {
         path: '/admin/offers',
         name: 'offers',
-        component: require('../views/admin/offers').default
+        component: require('../views/admin/Offers').default
     },
     {
         path: '/admin/providers',
         name: 'providers',
-        component: require('../views/admin/providers').default
+        component: require('../views/admin/Providers').default
     },
     {
         path: '/admin/categories',
         name: 'categories',
-        component: require('../views/admin/categories').default
+        component: require('../views/admin/Categories').default
+    },
+    {
+        path: '/admin/igvs',
+        name: 'igvs',
+        component: require('../views/admin/Igvs').default
     },
     {
         path: '/admin/*',

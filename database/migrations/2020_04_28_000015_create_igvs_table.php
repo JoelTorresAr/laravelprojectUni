@@ -15,7 +15,7 @@ class CreateIgvsTable extends Migration
     {
         Schema::create('igvs', function (Blueprint $table) {
             $table->id();
-            $table->decimal('mount',2,2);
+            $table->decimal('mount');
             $table->timestamps();
         });
     }
