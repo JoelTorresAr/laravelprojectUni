@@ -184,6 +184,46 @@
                     <p>Dashboard v1</p>
                   </router-link>
                 </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'offers'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Ofertas
+                    </p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'providers'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Proveedores
+                    </p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'categories'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Categorias
+                    </p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'igvs'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      IGV
+                    </p>
+                  </router-link>
+                </li>
+                <li class="nav-item">
+                  <router-link :to="{name: 'prooftypes'}" class="nav-link">
+                  <i class="nav-icon fas fa-circle-notch"></i>
+                    <p>
+                      Tipos de comprobantes
+                    </p>
+                  </router-link>
+                </li>
               </ul>
             </li>
             <!--/Productos-->
@@ -268,38 +308,6 @@
                   <i class="nav-icon fas fa-circle-notch"></i>
                     <p>
                       Sucursales
-                    </p>
-                  </router-link>
-                </li>
-                <li class="nav-item">
-                  <router-link :to="{name: 'offers'}" class="nav-link">
-                  <i class="nav-icon fas fa-circle-notch"></i>
-                    <p>
-                      Ofertas
-                    </p>
-                  </router-link>
-                </li>
-                <li class="nav-item">
-                  <router-link :to="{name: 'providers'}" class="nav-link">
-                  <i class="nav-icon fas fa-circle-notch"></i>
-                    <p>
-                      Proveedores
-                    </p>
-                  </router-link>
-                </li>
-                <li class="nav-item">
-                  <router-link :to="{name: 'categories'}" class="nav-link">
-                  <i class="nav-icon fas fa-circle-notch"></i>
-                    <p>
-                      Categorias
-                    </p>
-                  </router-link>
-                </li>
-                <li class="nav-item">
-                  <router-link :to="{name: 'igvs'}" class="nav-link">
-                  <i class="nav-icon fas fa-circle-notch"></i>
-                    <p>
-                      IGV
                     </p>
                   </router-link>
                 </li>

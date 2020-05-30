@@ -15,9 +15,10 @@ class CreateShelvesTable extends Migration
     {
         Schema::create('shelves', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->foreignId('subsidiary_id')->constrained();
             $table->enum('rentalstatus',['ENABLE','DISABLE'])->default('DISABLE');
-            $table->foreignId('dealer_id')->nullable();
+            $table->unsignedBigInteger('dealer_id')->nullable();
             $table->timestamps();
         });
     }

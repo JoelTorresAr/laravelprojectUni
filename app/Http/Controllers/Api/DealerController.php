@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DealerController extends Controller
 {
@@ -14,8 +15,9 @@ class DealerController extends Controller
      */
     public function index()
     {
-        $roles = Role::with(['permissions'])->get();
-        return $roles;
+        return DB::table('dealers')
+        ->orderBy('name')
+        ->get();
     }
     
     /**

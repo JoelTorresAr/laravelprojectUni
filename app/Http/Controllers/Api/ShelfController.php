@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
-
-use Illuminate\Http\Request;
+use App\Http\Requests\ShelfStoreRequest;
+use App\Http\Requests\ShelfUpdateRequest;
+use App\models\Shelf;
+use Illuminate\Support\Facades\DB;
 
 class ShelfController extends Controller
 {
@@ -14,28 +16,12 @@ class ShelfController extends Controller
      */
     public function index()
     {
-        $roles = Role::with(['permissions'])->get();
-        return $roles;
-    }
-    
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function listOnlyName()
-    {
-        return DB::table('roles')->pluck('name');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return DB::table('shelves')
+        ->join('subsidiaries','shelves.subsidiary_id','=','subsidiaries.id')
+        ->rightJoin('dealers','shelves.dealer_id','=','dealers.id')
+        ->select('shelves.*','subsidiaries.name as subsidiary','dealers.name as dealer')
+        ->orderBy('created_at')
+        ->get();
     }
 
     /**
@@ -44,17 +30,14 @@ class ShelfController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(RoleStoreRequest $request)
+    public function store(ShelfStoreRequest $request)
     {
-        $role = Role::create([
+        $shelf = Shelf::create([
             'name' => $request['name'],
-            'guard_name' => 'admin',
-            'description' => $request['description'],
+            'subsidiary_id' => $request['subsidiary_id'],
+            'rentalstatus' => $request['rentalstatus'],
+            'dealer_id' => $request['dealer_id'],
         ]);
-        if ($request['permissions'] !== null) {
-            $role->syncPermissions($request['permissions']);
-        }
-
 
         return ['status' => '200', 'message' => 'Creado con exito'];
     }
@@ -66,15 +49,15 @@ class ShelfController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(RoleUpdateRequest $request, $id)
+    public function update(ShelfUpdateRequest $request, $id)
     {
-        $role = Role::find($id);
-        $role->fill([
+        $shelf = Shelf::find($id);
+        $shelf->fill([
             'name' => $request['name'],
-            'description' => $request['description'],
+            'subsidiary_id' => $request['subsidiary_id'],
+            'rentalstatus' => $request['rentalstatus'],
+            'dealer_id' => $request['dealer_id'],
         ])->save();
-
-        $role->syncPermissions($request['permissions']);
 
 
         return ['status' => '200', 'message' => 'Editado con exito'];
@@ -88,7 +71,7 @@ class ShelfController extends Controller
      */
     public function destroy($id)
     {
-        Role::findOrFail($id)->delete();
+        Shelf::findOrFail($id)->delete();
         return ['status' => '200', 'message' => 'Eliminado con exito'];
     }
 }

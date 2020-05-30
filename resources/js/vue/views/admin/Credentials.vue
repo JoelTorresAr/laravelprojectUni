@@ -124,7 +124,7 @@
           :key="index"
         >{{rol.name }}</div>
       </template>
-      <template v-slot:item.firstname="{ item }">{{ nameStaff(item) }}</template>
+      <template v-slot:item.name="{ item }">{{ nameStaff(item) }}</template>
       <template v-slot:expanded-item="{ headers, item }">
         <td :colspan="headers.length">
           Permisos:
@@ -179,8 +179,8 @@
                   item-text="name"
                   item-value="id"
                 >
-                  <template slot="selection" slot-scope="{ item }">{{ item.firstname + ' ' + item.firstlastname + ' ' + item.secondlastname}}</template>
-                  <template slot="item" slot-scope="{ item }">{{ item.firstname + ' ' + item.firstlastname + ' ' + item.secondlastname}}</template>
+                  <template slot="selection" slot-scope="{ item }">{{ item.name + ' ' + item.lastname}}</template>
+                  <template slot="item" slot-scope="{ item }">{{ item.name + ' ' + item.lastname}}</template>
                 </v-select>
               </form>
             </v-card-text>
@@ -207,7 +207,7 @@ export default {
     headers: [
       { text: "Nombre", value: "name" , align: 'center'},
       { text: "Username", value: "username" , align: 'center'},
-      { text: "Usuario", value: "firstname" , align: 'center'},
+      { text: "Usuario", value: "name" , align: 'center'},
       { text: "Descripcion", value: "description" ,width: '15rem', align: 'center'},
       { text: "Fecha de creación", value: "created_at" , align: 'center'},
       { text: "Fecha de modificación", value: "updated_at" , align: 'center'},
@@ -281,16 +281,31 @@ export default {
     },
 
     deleteItem(item) {
-      let url = "/api/admins/destroy/" + item.id;
-      const index = this.credentials.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        axios.delete(url).then(({data})=>{
-          if (data.status == "200") {
-          this.credentials.splice(index, 1);
-          toastr.success("Eliminado con exito");}
-        }).catch(error => {
-            toastr.error("Error al eliminar");
-          });
+      Swal.fire({
+        title: "Estas seguro?",
+        text: "No podras revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#007bff",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Eliminar"
+      }).then(result => {
+        if (result.value) {
+          let url = "/api/admins/destroy/" + item.id;
+          const index = this.credentials.indexOf(item);
+          axios
+              .delete(url)
+              .then(({ data }) => {
+                if (data.status == "200") {
+                  this.credentials.splice(index, 1);
+                  toastr.success("Eliminado con exito");
+                }
+              })
+              .catch(error => {
+                toastr.error("Error al eliminar");
+              });
+        }
+      });
     },
 
     close() {
@@ -343,7 +358,7 @@ export default {
           if (data.status == "200") {
             this.initialize();
             toastr.success("Credencial asignada con exito");
-            this.close();
+            this.closeStaffModal();
           }
         })
         .catch(error => {
@@ -381,11 +396,9 @@ export default {
       let name = "";
       if (item.staff !== null) {
         name =
-          item.staff.firstname +
+          item.staff.name +
           " " +
-          item.staff.firstlastname +
-          " " +
-          item.staff.secondlastname;
+          item.staff.lastname;
       }
       return name;
     },

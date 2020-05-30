@@ -40,8 +40,7 @@ class StaffController extends Controller
     {
         return  DB::table('admins')
         ->rightJoin('staff','admins.staff_id','=','staff.id')
-        ->select('staff.id','staff.firstname','staff.firstlastname',
-                 'staff.secondlastname')
+        ->select('staff.id','staff.name','staff.lastname')
         ->whereNull('admins.staff_id')
         ->get();
     }

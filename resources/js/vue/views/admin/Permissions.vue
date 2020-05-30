@@ -176,16 +176,31 @@ export default {
       (this.editedItem.description = "")
     },
     deleteItem(item) {
-      let url = "/api/permissions/destroy/" + item.id;
-      const index = this.permissions.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        axios.delete(url).then(({data})=>{
-          if (data.status == "200") {
-          this.permissions.splice(index, 1);
-          toastr.success("Eliminado con exito");}
-        }).catch(error => {
-            toastr.error("Error al eliminar");
-          });
+      Swal.fire({
+        title: "Estas seguro?",
+        text: "No podras revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#007bff",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Eliminar"
+      }).then(result => {
+        if (result.value) {
+          let url = "/api/permissions/destroy/" + item.id;
+          const index = this.permissions.indexOf(item);
+          axios
+              .delete(url)
+              .then(({ data }) => {
+                if (data.status == "200") {
+                  this.permissions.splice(index, 1);
+                  toastr.success("Eliminado con exito");
+                }
+              })
+              .catch(error => {
+                toastr.error("Error al eliminar");
+              });
+        }
+      });
     },
 
     close() {

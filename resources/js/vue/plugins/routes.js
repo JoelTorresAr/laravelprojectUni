@@ -74,6 +74,11 @@ let routes = [{
         component: require('../views/admin/Igvs').default
     },
     {
+        path: '/admin/prooftypes',
+        name: 'prooftypes',
+        component: require('../views/admin/Prooftypes').default
+    },
+    {
         path: '/admin/*',
         component: require('../views/404.vue').default
     },

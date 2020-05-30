@@ -132,3 +132,19 @@ Route::group(['prefix' => 'igvs','namespace' => 'Api'], function () {
     Route::put('update/{provider}','IgvController@update');
     Route::delete('destroy/{provider}','IgvController@destroy');
 });
+
+//ProoftypeController
+Route::group(['prefix' => 'prooftypes','namespace' => 'Api'], function () {
+    Route::get('/','ProoftypeController@index');
+    Route::post('store','ProoftypeController@store');
+    Route::put('update/{prooftype}','ProoftypeController@update');
+    Route::delete('destroy/{prooftype}','ProoftypeController@destroy');
+});
+
+//ShelfController
+Route::group(['prefix' => 'shelves','namespace' => 'Api'], function () {
+    Route::get('/','ShelfController@index');
+    Route::post('store','ShelfController@store');
+    Route::put('update/{shelf}','ShelfController@update');
+    Route::delete('destroy/{shelf}','ShelfController@destroy');
+});

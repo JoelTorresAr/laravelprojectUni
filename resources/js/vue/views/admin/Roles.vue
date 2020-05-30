@@ -243,16 +243,31 @@ export default {
         (this.editedItem.permissions = []);
     },
     deleteItem(item) {
-      let url = "/api/roles/destroy/" + item.id;
-      const index = this.roles.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        axios.delete(url).then(({data})=>{
-          if (data.status == "200") {
-          this.roles.splice(index, 1);
-          toastr.success("Eliminado con exito");}
-        }).catch(error => {
-            toastr.error("Error al eliminar");
-          });
+      Swal.fire({
+        title: "Estas seguro?",
+        text: "No podras revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#007bff",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Eliminar"
+      }).then(result => {
+        if (result.value) {
+          let url = "/api/roles/destroy/" + item.id;
+          const index = this.roles.indexOf(item);
+          axios
+              .delete(url)
+              .then(({ data }) => {
+                if (data.status == "200") {
+                  this.roles.splice(index, 1);
+                  toastr.success("Eliminado con exito");
+                }
+              })
+              .catch(error => {
+                toastr.error("Error al eliminar");
+              });
+        }
+      });
     },
 
     close() {

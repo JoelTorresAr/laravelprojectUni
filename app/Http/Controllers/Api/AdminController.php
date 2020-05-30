@@ -23,7 +23,7 @@ class AdminController extends Controller
                 ->get();*/
         return Admin::with([
             'staff' => function ($query2) {
-                $query2->select('id', 'firstname', 'firstlastname', 'secondlastname');
+                $query2->select('id', 'name', 'lastname');
             },
             'roles' => function ($query) {
                 $query->select('name');

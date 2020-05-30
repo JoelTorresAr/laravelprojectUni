@@ -97,6 +97,7 @@
                                 label="Fecha de nacimiento*"
                                 readonly
                                 v-on="on"
+                                :class="{ 'is-invalid': editedItem.errors.has('birthday') }"
                               ></v-text-field>
                             </template>
                             <v-date-picker
@@ -107,6 +108,7 @@
                               @change="saveDate"
                             ></v-date-picker>
                           </v-menu>
+                          <has-error :form="editedItem" field="birthday"></has-error>
                         </template>
                       </v-col>
                       <v-col cols="12" sm="6">
@@ -359,20 +361,31 @@ export default {
     },
 
     deleteItem(item) {
-      let url = "/api/staff/destroy/" + item.id;
-      const index = this.staff.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        axios
-          .delete(url)
-          .then(({ data }) => {
-            if (data.status == "200") {
-              this.staff.splice(index, 1);
-              toastr.success("Eliminado con exito");
-            }
-          })
-          .catch(error => {
-            toastr.error("Error al eliminar");
-          });
+      Swal.fire({
+        title: "Estas seguro?",
+        text: "No podras revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#007bff",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Eliminar"
+      }).then(result => {
+        if (result.value) {
+          let url = "/api/staff/destroy/" + item.id;
+          const index = this.staff.indexOf(item);
+          axios
+              .delete(url)
+              .then(({ data }) => {
+                if (data.status == "200") {
+                  this.staff.splice(index, 1);
+                  toastr.success("Eliminado con exito");
+                }
+              })
+              .catch(error => {
+                toastr.error("Error al eliminar");
+              });
+        }
+      });
     },
 
     close() {
@@ -391,20 +404,24 @@ export default {
     },
     save() {
       if (this.editedIndex === -1) {
-        
-        this.editedItem.post("/api/staff/store").then(({ data }) => {
-          if (data.status == "200") {
-             this.initialize();
+        this.editedItem
+          .post("/api/staff/store")
+          .then(({ data }) => {
+            if (data.status == "200") {
+              this.initialize();
               toastr.success("Registrado con exito");
               this.close();
-          }
-        }).catch(error => {
+            }
+          })
+          .catch(error => {
             toastr.error("Error al registrar");
           });
       } else {
         let url = "/api/staff/update/" + this.staffId;
-        this.editedItem.put(url).then(({ data }) => {
-          if (data.status == "200") {
+        this.editedItem
+          .put(url)
+          .then(({ data }) => {
+            if (data.status == "200") {
               this.initialize();
               toastr.success("Editado con exito");
               this.close();

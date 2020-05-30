@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class SaleController extends Controller
 {
@@ -14,8 +15,9 @@ class SaleController extends Controller
      */
     public function index()
     {
-        $roles = Role::with(['permissions'])->get();
-        return $roles;
+        return DB::table('sales')
+        ->orderBy('created_at')
+        ->get();
     }
     
     /**

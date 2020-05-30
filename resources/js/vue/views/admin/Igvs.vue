@@ -12,11 +12,11 @@
     >
       <template v-slot:top>
         <v-toolbar flat class="mt-2">
-          <v-toolbar-title>Areas de trabajo</v-toolbar-title>
+          <v-toolbar-title>IGV</v-toolbar-title>
           <v-divider class="mx-4" inset vertical></v-divider>
           <v-spacer></v-spacer>
           <v-dialog :dark="darkStile" v-model="dialogForm" persistent max-width="600px">
-            <template v-if="can('admins.create')"  v-slot:activator="{ on }">
+            <template v-if="can('admins.create')" v-slot:activator="{ on }">
               <v-btn color="primary" class="mb-2" v-on="on">Agregar nuevo</v-btn>
             </template>
             <v-card>
@@ -47,7 +47,7 @@
                 <v-spacer></v-spacer>
                 <v-btn color="red darken-1" text @click="close">Cancelar</v-btn>
                 <v-btn
-                 v-if="can('admins.edit')" 
+                  v-if="can('admins.edit')"
                   color="blue darken-1"
                   :disabled="editedItem.busy"
                   type="submit"
@@ -59,13 +59,16 @@
           </v-dialog>
         </v-toolbar>
       </template>
+      <template v-slot:item.mount="{ item }">
+        {{ item.mount }} %
+      </template>
       <template v-slot:item.created_at="{ item }">{{ formatedTime(item.created_at) }}</template>
       <template v-slot:item.updated_at="{ item }">{{ formatedTime(item.updated_at) }}</template>
       <template v-slot:item.actions="{ item }">
-        <v-btn v-if="can('admins.edit')"  color="primary" fab x-small dark @click="editItem(item)">
+        <v-btn v-if="can('admins.edit')" color="primary" fab x-small dark @click="editItem(item)">
           <v-icon>mdi-pencil</v-icon>
         </v-btn>
-        <v-btn v-if="can('admins.destroy')"  color="red" fab x-small dark @click="deleteItem(item)">
+        <v-btn v-if="can('admins.destroy')" color="red" fab x-small dark @click="deleteItem(item)">
           <v-icon>mdi-delete</v-icon>
         </v-btn>
       </template>
@@ -85,13 +88,13 @@ export default {
       { text: "IGV", value: "mount" },
       { text: "Fecha de creación", value: "created_at" },
       { text: "Fecha de modificación", value: "updated_at" },
-      { text: "Actions", value: "actions", sortable: false },
+      { text: "Actions", value: "actions", sortable: false }
     ],
     igvs: [],
     editedIndex: -1,
     itemSelectedId: "",
     editedItem: new Form({
-      mount: "",
+      mount: ""
     })
   }),
 
@@ -122,13 +125,13 @@ export default {
       });
     },
     editItem(item) {
-        (this.editedIndex = { id: item.id }),
+      (this.editedIndex = { id: item.id }),
         (this.editedItem.mount = item.mount),
         (this.itemSelectedId = item.id),
         (this.dialogForm = true);
     },
     save() {
-      if (this.editedIndex === -1) {  
+      if (this.editedIndex === -1) {
         this.editedItem
           .post("/api/igvs/store")
           .then(({ data }) => {
@@ -142,7 +145,7 @@ export default {
             toastr.error("Error al registrar");
           });
       } else {
-         let url = "/api/igvs/update/" + this.itemSelectedId;
+        let url = "/api/igvs/update/" + this.itemSelectedId;
         this.editedItem
           .put(url)
           .then(({ data }) => {
@@ -158,19 +161,37 @@ export default {
       }
     },
     emptyForm() {
-      (this.editedItem.mount = "");
+      this.editedItem.mount = "";
     },
     deleteItem(item) {
-      let url = "/api/igvs/destroy/" + item.id;
-      const index = this.igvs.indexOf(item);
-      confirm("Are you sure you want to delete this item?") &&
-        axios.delete(url).then(({data})=>{
-          if (data.status == "200") {
-          this.igvs.splice(index, 1);
-          toastr.success("Eliminado con exito");}
-        }).catch(error => {
-            toastr.error("Error al eliminar");
-          });
+      Swal.fire({
+        title: "Estas seguro?",
+        text: "No podras revertir esto!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#007bff",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Si, Eliminar"
+      }).then(result => {
+        if (result.value) {
+          let url = "/api/igvs/destroy/" + item.id;
+          const index = this.igvs.indexOf(item);
+          axios
+            .delete(url)
+            .then(({ data }) => {
+              if (data.status == "200") {
+                this.igvs.splice(index, 1);
+                Toast.fire({
+                  icon: "success",
+                  title: "Eliminado con exito"
+                });
+              }
+            })
+            .catch(error => {
+              toastr.error("Error al eliminar");
+            });
+        }
+      });
     },
 
     close() {

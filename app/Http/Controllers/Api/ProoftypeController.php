@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
-
+use App\Http\Requests\ProoftypeStoreRequest;
+use App\Http\Requests\ProoftypeUpdateRequest;
+use App\models\Prooftype;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class ProoftypeController extends Controller
 {
@@ -14,28 +17,9 @@ class ProoftypeController extends Controller
      */
     public function index()
     {
-        $roles = Role::with(['permissions'])->get();
-        return $roles;
-    }
-    
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function listOnlyName()
-    {
-        return DB::table('roles')->pluck('name');
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
+        return DB::table('prooftypes')
+        ->orderBy('name')
+        ->get();
     }
 
     /**
@@ -44,17 +28,11 @@ class ProoftypeController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(RoleStoreRequest $request)
+    public function store(ProoftypeStoreRequest $request)
     {
-        $role = Role::create([
-            'name' => $request['name'],
-            'guard_name' => 'admin',
-            'description' => $request['description'],
+        Prooftype::create([
+            'name' => $request['name']
         ]);
-        if ($request['permissions'] !== null) {
-            $role->syncPermissions($request['permissions']);
-        }
-
 
         return ['status' => '200', 'message' => 'Creado con exito'];
     }
@@ -66,15 +44,12 @@ class ProoftypeController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(RoleUpdateRequest $request, $id)
+    public function update(ProoftypeUpdateRequest $request, $id)
     {
-        $role = Role::find($id);
-        $role->fill([
-            'name' => $request['name'],
-            'description' => $request['description'],
+        $prooftype = Prooftype::find($id);
+        $prooftype->fill([
+            'name' => $request['name']
         ])->save();
-
-        $role->syncPermissions($request['permissions']);
 
 
         return ['status' => '200', 'message' => 'Editado con exito'];
@@ -88,7 +63,7 @@ class ProoftypeController extends Controller
      */
     public function destroy($id)
     {
-        Role::findOrFail($id)->delete();
+        Prooftype::findOrFail($id)->delete();
         return ['status' => '200', 'message' => 'Eliminado con exito'];
     }
 }
