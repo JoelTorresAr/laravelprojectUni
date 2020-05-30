@@ -79,6 +79,11 @@ let routes = [{
         component: require('../views/admin/Prooftypes').default
     },
     {
+        path: '/admin/shelves',
+        name: 'shelves',
+        component: require('../views/admin/shelves').default
+    },
+    {
         path: '/admin/*',
         component: require('../views/404.vue').default
     },

@@ -27,5 +27,7 @@ class DatabaseSeeder extends Seeder
         $this->call(IgvsTableSeeder::class);
         $this->call(CategoriesTableSeeder::class);
         $this->call(ProvidersTableSeeder::class);
+        $this->call(ShelvesTableSeeder::class);
+        $this->call(DealersTableSeeder::class);
     }
 }

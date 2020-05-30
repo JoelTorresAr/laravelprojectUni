@@ -15,6 +15,7 @@ class CreateDealersTable extends Migration
     {
         Schema::create('dealers', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
             $table->foreignId('admin_id')->constrained();
             $table->enum('status',['ENABLE','DISABLE'])->default('ENABLE');
             $table->dateTime('startdate');

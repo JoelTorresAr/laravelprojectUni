@@ -18,7 +18,7 @@ class ShelfController extends Controller
     {
         return DB::table('shelves')
         ->join('subsidiaries','shelves.subsidiary_id','=','subsidiaries.id')
-        ->rightJoin('dealers','shelves.dealer_id','=','dealers.id')
+        ->leftJoin('dealers','shelves.dealer_id','=','dealers.id')
         ->select('shelves.*','subsidiaries.name as subsidiary','dealers.name as dealer')
         ->orderBy('created_at')
         ->get();
